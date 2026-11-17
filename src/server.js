@@ -4,7 +4,7 @@ import cors from 'cors';
 import { connectMongoDB } from './db/connecnMongoDB.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
-import notesRoutes from './rotes/notesRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
 import { logger } from './middleware/logger.js';
 
 const app = express();
