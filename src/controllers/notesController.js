@@ -9,7 +9,7 @@ export const getAllNotes = async (req, res) => {
 export const getNoteById = async (req, res) => {
   const note = await Note.findOne({ _id: req.params.noteId });
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
 };
@@ -22,7 +22,7 @@ export const createNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
   const note = await Note.findOneAndDelete({ _id: req.params.noteId });
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
 };
@@ -34,11 +34,7 @@ export const updateNote = async (req, res) => {
     { returnDocument: 'after' },
   );
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
-};
-
-export const getError = () => {
-  throw new Error('Simulated server error');
 };

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import {
-  getError,
   getNoteById,
   getAllNotes,
   createNote,
@@ -13,8 +12,6 @@ const router = Router();
 router.get('/notes', getAllNotes);
 
 router.get('/notes/:noteId', getNoteById);
-
-router.get('/test-error', getError);
 
 router.post('/notes', createNote);
 
