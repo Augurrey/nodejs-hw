@@ -13,10 +13,10 @@ export const getAllNotesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20).default(10),
-    tag: Joi.string().valid(...TAGS),
+    tag: Joi.string().valid(...TAGS).optional(),
     search: Joi.string().trim().allow(''),
-    sortBy: Joi.string().valid('_id', 'title').default('_id'),
-    sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
+    sortBy: Joi.string().valid('_id', 'title'),
+    sortOrder: Joi.string().valid('asc', 'desc'),
   }),
 };
 
@@ -29,7 +29,7 @@ export const noteIdSchema = {
 export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).required(),
-    content: Joi.string(),
+    content: Joi.string().allow(''),
     tag: Joi.string().valid(...TAGS),
   }),
 };
@@ -40,7 +40,7 @@ export const updateNoteSchema = {
   },
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1),
-    content: Joi.string(),
+    content: Joi.string().allow(''),
     tag: Joi.string().valid(...TAGS),
   }).min(1),
 };
