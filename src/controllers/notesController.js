@@ -2,14 +2,41 @@ import Note from '../models/note.js';
 import createHttpError from 'http-errors';
 
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  const { page, perPage, tag, search, sortBy, sortOrder } = req.query;
+  const skip = (page - 1) * perPage;
+
+  const filter = {};
+
+  if (tag !== undefined) {
+    filter.tag = tag;
+  }
+
+  if (search !== undefined) {
+    filter.$or = [
+      { title: { $regex: RegExp.escape(search), $options: 'i' } },
+      { content: { $regex: RegExp.escape(search), $options: 'i' } },
+    ];
+  }
+
+  const [notes, totalNotes] = await Promise.all([
+    Note.find(filter)
+      .sort({
+        [sortBy]: sortOrder,
+      })
+      .skip(skip)
+      .limit(perPage),
+    Note.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(totalNotes / perPage);
+
+  res.status(200).json({ page, perPage, totalNotes, totalPages, notes });
 };
 
 export const getNoteById = async (req, res) => {
   const note = await Note.findOne({ _id: req.params.noteId });
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
 };
@@ -22,7 +49,7 @@ export const createNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
   const note = await Note.findOneAndDelete({ _id: req.params.noteId });
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
 };
@@ -34,11 +61,7 @@ export const updateNote = async (req, res) => {
     { returnDocument: 'after' },
   );
   if (!note) {
-    throw createHttpError(404, 'Route not found');
+    throw createHttpError(404, 'Note not found');
   }
   res.status(200).json(note);
-};
-
-export const getError = () => {
-  throw new Error('Simulated server error');
 };
