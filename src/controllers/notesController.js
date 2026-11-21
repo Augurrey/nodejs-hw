@@ -1,8 +1,15 @@
-import Note from '../models/note.js';
+import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
 export const getAllNotes = async (req, res) => {
-  const { page, perPage, tag, search, sortBy, sortOrder } = req.query;
+  const {
+    page,
+    perPage,
+    tag,
+    search,
+    sortBy = '_id',
+    sortOrder = 'asc',
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   const filter = {};
@@ -12,9 +19,11 @@ export const getAllNotes = async (req, res) => {
   }
 
   if (search !== undefined) {
+    const pattern = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
     filter.$or = [
-      { title: { $regex: RegExp.escape(search), $options: 'i' } },
-      { content: { $regex: RegExp.escape(search), $options: 'i' } },
+      { title: { $regex: pattern, $options: 'i' } },
+      { content: { $regex: pattern, $options: 'i' } },
     ];
   }
 
